@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  price       Decimal  @db.Decimal(10, 2)
+  
+  // Сүрөт үчүн негизги URL
+  imageUrl    String?  @db.Text
+  
+  // "Поиск по фото" үчүн керек болгон талаалар
+  // Google Vision'дон келген тегдерди ушул жерге сактайбыз (мисалы: "крассовка, спорт, nike")
+  tags        String?  @db.Text
+  
+  // Эгер келечекте вектордук издөө (pgvector) кошсоңуз, 
+  // бул талаа сүрөттүн математикалык кодун сактайт
+  imageVector Unsupported("vector(1536)")? 
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tags]) // Тегдер боюнча издөөнү тездетүү үчүн
+}
