@@ -31,6 +31,19 @@ export class ProductsService {
     return product;
   }
 
+async findSearch(query: string) {
+  if (!query?.trim()) return [];
+
+  return this.prisma.$queryRaw`
+    SELECT *,
+      similarity(name, ${query}) as score
+    FROM "Product"
+    WHERE name ILIKE '%' || ${query} || '%'
+       OR tags ILIKE '%' || ${query} || '%'
+    ORDER BY score DESC
+  `;
+}
+
   async update(id: number, updateProductDto: UpdateProductDto): Promise<any> {
     await this.findOne(id);
 
